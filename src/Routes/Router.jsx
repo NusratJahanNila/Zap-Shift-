@@ -32,12 +32,14 @@ const router = createBrowserRouter([
         element: <PrivateRoute>
           <SendParcel></SendParcel>
         </PrivateRoute>,
-        loader: () => fetch('/service-center.json').then(res => res.json())
+        loader: () => fetch('/service-center.json').then(res => res.json()),
+        hydrateFallbackElement:<p>Loading...</p>
       },
       {
         path: '/coverage',
         Component: Coverage,
-        loader: () => fetch('/service-center.json').then(res => res.json())
+        loader: () => fetch('/service-center.json').then(res => res.json()),
+        hydrateFallbackElement:<p>Loading...</p>
       },
       {
         path: '//about-us',

@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useLoaderData } from 'react-router';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import useAuth from '../../Hooks/useAuth';
 
 const SendParcel = () => {
-    // Delivery charge
-    const [cost, setCost] = useState(0)
-    // api
+    const { user } = useAuth();
+    // axios api
+    const axiosSecure = useAxiosSecure();
+    // api from router
     const serviceCenters = useLoaderData();
     // react hook form
-    const { register, control, handleSubmit, formState: { errors } } = useForm();
+    const {
+        register,
+        control, 
+        handleSubmit,
+    } = useForm();
     // duplicate rigions
     const regionsData = serviceCenters.map(centers => centers.region)
     // remove duplicate
     const regions = [...new Set(regionsData)];
-    const senderRegion = useWatch({ control, name: "sender-region" })
+    const senderRegion = useWatch({ control, name: "senderRegion" })
     const receiverRegion = useWatch({ control, name: "receiverRegion" })
 
     // get districts of a particular region
@@ -34,12 +40,10 @@ const SendParcel = () => {
         let cost = 0;
         if (isDocument) {
             cost = isSameDistrict ? 60 : 80;
-            setCost(cost);
         }
         else {
             if (parcelWeight < 3) {
                 cost = isSameDistrict ? 110 : 150;
-                setCost(cost);
             }
             else {
                 const minCost = isSameDistrict ? 110 : 150;
@@ -47,7 +51,6 @@ const SendParcel = () => {
                 const extraCharge = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
 
                 cost = minCost + extraCharge;
-                setCost(cost);
             }
         }
         Swal.fire({
@@ -60,6 +63,13 @@ const SendParcel = () => {
             confirmButtonText: "Yes, confirm it!"
         }).then((result) => {
             if (result.isConfirmed) {
+
+                // save the parcel info to the database
+                axiosSecure.post('/parcels', data)
+                    .then(res => {
+                        console.log('after saving parcel', res.data)
+                    })
+
                 // Swal.fire({
                 //     title: "Confirmed!",
                 //     text: "Your order has been placed.",
@@ -91,9 +101,9 @@ const SendParcel = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                             <div className="grid grid-cols-1 mt-1">
                                 <label className="label">Parcel Name</label>
-                                <input type="text" {...register('parcel-name', { required: true })} className="input w-full" placeholder="Parcel Name" />
+                                <input type="text" {...register('parcelName', { required: true })} className="input w-full" placeholder="Parcel Name" />
                             </div>
-                            {errors?.parcel - name.type === 'required' && <p className='text-red-600'>Parcel name is required</p>}
+                           
                             <div className="grid grid-cols-1">
                                 <label className="label">Parcel Weight (KG)</label>
                                 <input type="text" {...register('parcelWeight', { required: true })} className="input w-full" placeholder="Parcel Weight (KG)" />
@@ -110,33 +120,44 @@ const SendParcel = () => {
                                 <fieldset className="fieldset">
                                     {/* name */}
                                     <label className="label">Sender's name</label>
-                                    <input type="text" {...register('sender-name', { required: true })} className="input w-full" placeholder="Sender's name" />
+                                    <input
+                                        defaultValue={user?.displayName || ''}
+                                        type="text"
+                                        {...register('senderName', { required: true })}
+                                        className="input w-full"
+                                        placeholder="Sender's name" />
                                     {/* email */}
                                     <label className="label">Sender's Email</label>
-                                    <input type="email" {...register('sender-email', { required: true })} className="input w-full" placeholder="Sender's email" />
+                                    <input
+                                        defaultValue={user?.email || ''}
+                                        type="email"
+                                        {...register('senderEmail', { required: true })}
+                                        className="input w-full"
+                                        placeholder="Sender's email"
+                                    />
                                     {/* address */}
                                     <label className="label">Address</label>
-                                    <input type="text" {...register('sender-address', { required: true })} className="input w-full" placeholder="Address" />
+                                    <input type="text" {...register('senderAddress', { required: true })} className="input w-full" placeholder="Address" />
                                     {/* phone */}
                                     <label className="label">Sender Phone No</label>
-                                    <input type="text" {...register('sender-phone', { required: true })} className="input w-full" placeholder="Phone No" />
+                                    <input type="text" {...register('senderPhone', { required: true })} className="input w-full" placeholder="Phone No" />
                                     {/* district */}
                                     <label className="label">Your Region</label>
-                                    <select defaultValue="Select Your Region" {...register('sender-region', { required: true })} className="select w-full">
-                                        <option disabled={true}>Select Your Region</option>
-                                        {
-                                            regions.map((region, index) => <option key={index} value={region}>{region}</option>)
-                                        }
-
+                                    <select {...register('senderRegion', { required: true })} className="select w-full">
+                                        <option value="">Select Your Region</option>
+                                        {regions.map((region, index) => (
+                                            <option key={index} value={region}>{region}</option>
+                                        ))}
                                     </select>
 
-                                    <label className="label">Your District</label>
-                                    <select defaultValue="Select Your District" {...register('senderDistrict', { required: true })} className="select w-full">
-                                        <option disabled={true}>Select Your District</option>
-                                        {
-                                            districtsByRegion(senderRegion).map((region, index) => <option key={index} value={region}>{region}</option>)
+                                    <label className="label">Sender's District</label>
+                                    <select {...register('senderDistrict', { required: true })} className="select w-full">
+                                        <option value="">Select Your District</option>
+                                        {senderRegion &&
+                                            districtsByRegion(senderRegion).map((district, index) => (
+                                                <option key={index} value={district}>{district}</option>
+                                            ))
                                         }
-
                                     </select>
 
                                     {/* instruction */}
@@ -152,16 +173,16 @@ const SendParcel = () => {
                                 <fieldset className="fieldset">
                                     {/* name */}
                                     <label className="label">Receiver's name</label>
-                                    <input type="text" {...register('receiver-name', { required: true })} className="input w-full" placeholder="Receiver's name" />
+                                    <input type="text" {...register('receiverName', { required: true })} className="input w-full" placeholder="Receiver's name" />
                                     {/* email */}
                                     <label className="label">Receiver's Email</label>
-                                    <input type="email" {...register('receiver-email', { required: true })} className="input w-full" placeholder="Receiver's email" />
+                                    <input type="email" {...register('receiverEmail', { required: true })} className="input w-full" placeholder="Receiver's email" />
                                     {/* address */}
                                     <label className="label">Address</label>
-                                    <input type="text" {...register('receiver-address', { required: true })} className="input w-full" placeholder="Address" />
+                                    <input type="text" {...register('receiverAddress', { required: true })} className="input w-full" placeholder="Address" />
                                     {/* phone */}
                                     <label className="label">Receiver Phone No</label>
-                                    <input type="text" {...register('receiver-phone', { required: true })} className="input w-full" placeholder="Phone No" />
+                                    <input type="text" {...register('receiverPhone', { required: true })} className="input w-full" placeholder="Phone No" />
 
                                     {/* district */}
                                     <label className="label">Receiver's Region</label>
@@ -191,7 +212,6 @@ const SendParcel = () => {
                     </div>
                     {/* sec-3 */}
                     <div className="mt-5 space-y-3">
-                        <p className='font-bold text-secondary'>*Delivery charge : <span className='text-gray-500'>{cost} ৳</span></p>
                         <p>* PickUp Time-4pm-7pm-Approx.</p>
                         <button className='bg-primary btn rounded-2xl px-5 '>Proceed to Confirm Booking</button>
                     </div>
