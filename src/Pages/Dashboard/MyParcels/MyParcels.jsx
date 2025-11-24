@@ -15,7 +15,7 @@ const MyParcels = () => {
     // axios
     const axiosSecure = useAxiosSecure();
     // tanstack
-    const { data: parcels = [] ,refetch} = useQuery({
+    const { data: parcels = [], refetch } = useQuery({
         queryKey: ['myParcels', user?.email],
         queryFn: async () => {
             const res = await axiosSecure.get(`/parcels?email=${user.email}`);
@@ -55,59 +55,79 @@ const MyParcels = () => {
             }
         });
     }
-    return (
-        <div>
-            my parcels : {parcels.length}
-            <div className="overflow-x-auto">
-                <table className="table">
-                    {/* head */}
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Cost</th>
-                            <th>Payment</th>
-                            <th>Delivery Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            parcels.map((parcel, index) => <tr key={parcel._id} className="bg-base-200">
-                                <th>{index + 1}</th>
-                                <td>{parcel.parcelName}</td>
-                                <td>{parcel.cost}</td>
-                                <td>
-                                    {
-                                        parcel.paymentStatus==='paid'?
-                                        <span className='text-green-800'>Paid</span>
-                                        :
-                                        <Link to={`/dashboard/payment/${parcel._id}`} className='btn bg-primary rounded-2xl text-black'>Pay
-                                        </Link>
-                                    }
-                                </td>
-                                <td>{'pending'}</td>
-                                <td className='space-x-1.5'>
-                                    {/* view */}
-                                    <Link to={`/dashboard/parcelsDetails/${parcel._id}`} className='btn btn-square hover:bg-primary'>
-                                        <FaMagnifyingGlass />
-                                    </Link>
-                                    {/* edit */}
-                                    <button className='btn btn-square hover:bg-primary'>
-                                        <FiEdit />
-                                    </button>
-                                    {/* delete */}
-                                    <button
-                                        onClick={() => handleParcelDelete(parcel._id)}
-                                        className='btn btn-square hover:bg-primary'>
-                                        <MdDelete />
-                                    </button>
-                                </td>
-                            </tr>)
-                        }
+    // payment
+    const handlePayment = async (parcel) => {
+        // backend a jei data gula lagbe
+        const paymentInfo = {
+            cost: parcel.cost,
+            parcelId: parcel._id,
+            senderEmail: parcel.senderEmail,
+            parcelName: parcel.parcelName,
+        }
+        // hit backend api
+        const res = await axiosSecure.post('/create-checkout-session', paymentInfo);
 
-                    </tbody>
-                </table>
+        console.log(res.data.url);
+        // go to checkout page
+        window.location.assign(res.data.url);
+    }
+    return (
+        <div className="max-w-6xl mx-auto py-5">
+            <div className="bg-white rounded-2xl p-4">
+                <h2 className='text-2xl text-secondary font-bold'>My Parcels : <span className='text-black font-semibold'>{parcels.length}</span></h2>
+                <div className="overflow-x-auto">
+                    <table className="table">
+                        {/* head */}
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Cost</th>
+                                <th>Payment</th>
+                                <th>Delivery Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                parcels.map((parcel, index) => <tr key={parcel._id} className="bg-base-200">
+                                    <th>{index + 1}</th>
+                                    <td>{parcel.parcelName}</td>
+                                    <td>{parcel.cost}</td>
+                                    <td>
+                                        {
+                                            parcel.paymentStatus === 'paid' ?
+                                                <span className='text-green-800'>Paid</span>
+                                                :
+                                                <button
+                                                    onClick={() => handlePayment(parcel)}
+                                                    className='btn bg-primary rounded-2xl text-black'>Pay</button>
+
+                                        }
+                                    </td>
+                                    <td>{'pending'}</td>
+                                    <td className='space-x-1.5'>
+                                        {/* view */}
+                                        <Link to={`/dashboard/parcelsDetails/${parcel._id}`} className='btn btn-square hover:bg-primary'>
+                                            <FaMagnifyingGlass />
+                                        </Link>
+                                        {/* edit */}
+                                        <button className='btn btn-square hover:bg-primary'>
+                                            <FiEdit />
+                                        </button>
+                                        {/* delete */}
+                                        <button
+                                            onClick={() => handleParcelDelete(parcel._id)}
+                                            className='btn btn-square hover:bg-primary'>
+                                            <MdDelete />
+                                        </button>
+                                    </td>
+                                </tr>)
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
