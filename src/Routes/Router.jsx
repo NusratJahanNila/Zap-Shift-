@@ -17,6 +17,7 @@ import { ClimbingBoxLoader } from "react-spinners";
 import ParcelsDetails from "../Pages/Dashboard/ParcelsDetails/ParcelsDetails";
 import PaymentSuccess from "../Pages/Dashboard/Payment/PaymentSuccess";
 import PaymentCancel from "../Pages/Dashboard/Payment/PaymentCancel";
+import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 
 const router = createBrowserRouter([
   {
@@ -91,6 +92,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard/payment-success',
         Component: PaymentSuccess,
+      },
+      {
+        path: '/dashboard/payment-history',
+        Component: PaymentHistory,
       },
       {
         path: '/dashboard/payment-cancelled',

@@ -1,10 +1,11 @@
 import { useForm, useWatch } from 'react-hook-form';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import useAuth from '../../Hooks/useAuth';
 
 const SendParcel = () => {
+    const navigate=useNavigate();
     const { user } = useAuth();
     // axios api
     const axiosSecure = useAxiosSecure();
@@ -13,7 +14,7 @@ const SendParcel = () => {
     // react hook form
     const {
         register,
-        control, 
+        control,
         handleSubmit,
     } = useForm();
     // duplicate rigions
@@ -54,7 +55,7 @@ const SendParcel = () => {
             }
         }
         // send cost to db
-        data.cost=cost;
+        data.cost = cost;
         Swal.fire({
             title: "Agree with the cost?",
             text: `You will be charged ${cost}Tk`,
@@ -70,14 +71,21 @@ const SendParcel = () => {
                 axiosSecure.post('/parcels', data)
                     .then(res => {
                         console.log('after saving parcel', res.data)
-                    })
 
-                // Swal.fire({
-                //     title: "Confirmed!",
-                //     text: "Your order has been placed.",
-                //     icon: "success"
-                // });
+                        if (res.data.insertedId) {
+                            navigate('/dashboard/my-parcels')
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Parcel has created.Please pay!",
+                                showConfirmButton: false,
+                                timer: 2500
+                            });
+                        }
+                    })
             }
+
+
         });
     }
     return (
@@ -105,7 +113,7 @@ const SendParcel = () => {
                                 <label className="label">Parcel Name</label>
                                 <input type="text" {...register('parcelName', { required: true })} className="input w-full" placeholder="Parcel Name" />
                             </div>
-                           
+
                             <div className="grid grid-cols-1">
                                 <label className="label">Parcel Weight (KG)</label>
                                 <input type="text" {...register('parcelWeight', { required: true })} className="input w-full" placeholder="Parcel Weight (KG)" />
