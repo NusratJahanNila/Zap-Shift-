@@ -41,36 +41,36 @@ const DashboardLayout = () => {
                         {/* Our list items */}
                         {/* my parcels */}
                         <li>
-                            <div className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcels">
+                            <NavLink to='/dashboard/my-parcels' className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcels">
                                 <div >
                                     <FaBoxes className="my-1.5 inline-block size-4" />
                                 </div>
                                 <span className="is-drawer-close:hidden">
-                                    <NavLink to='/dashboard/my-parcels'>My Parcels</NavLink>
+                                    <h2>My Parcels</h2>
                                 </span>
-                            </div>
+                            </NavLink>
                         </li>
                         {/* payment history */}
                         <li>
-                            <div className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History">
+                            <NavLink to='/dashboard/payment-history' className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History">
                                 <div >
                                     <MdOutlinePayments className="my-1.5 inline-block size-4" />
                                 </div>
                                 <span className="is-drawer-close:hidden">
-                                    <NavLink to='/dashboard/payment-history'>Payment History</NavLink>
+                                    <h2>Payment History</h2>
                                 </span>
-                            </div>
+                            </NavLink>
                         </li>
                         {/* Approve Rider */}
                         <li>
-                            <div className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Rider">
+                            <NavLink to='/dashboard/approve-rider' className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Rider">
                                 <div >
                                     <RiMotorbikeFill className="my-1.5 inline-block size-4" />
                                 </div>
                                 <span className="is-drawer-close:hidden">
-                                    <NavLink to='/dashboard/approve-rider'>Approve Rider</NavLink>
+                                    < h2>Approve Rider</h2>
                                 </span>
-                            </div>
+                            </NavLink>
                         </li>
 
                         {/* List item */}
