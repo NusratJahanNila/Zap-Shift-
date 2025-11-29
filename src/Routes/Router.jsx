@@ -22,6 +22,7 @@ import ApproveRider from "../Pages/Dashboard/ApproveRider/ApproveRider";
 import RiderDetails from "../Pages/Rider/RiderDetails";
 import UsersManagement from "../Pages/Dashboard/UsersManagement/UsersManagement";
 import AdminRoute from "./AdminRoute/AdminRoute";
+import AssignRiders from "../Pages/Dashboard/AssignRiders/AssignRiders";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,12 @@ const router = createBrowserRouter([
         path: '/dashboard/approve-rider',
         element:<AdminRoute>
           <ApproveRider></ApproveRider>
+        </AdminRoute>
+      },
+      {
+        path: '/dashboard/assign-riders',
+        element:<AdminRoute>
+          <AssignRiders/>
         </AdminRoute>
       },
       {

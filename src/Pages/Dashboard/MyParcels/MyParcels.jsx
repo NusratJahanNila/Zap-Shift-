@@ -84,6 +84,7 @@ const MyParcels = () => {
                                 <th>Name</th>
                                 <th>Cost</th>
                                 <th>Payment</th>
+                                <th>Tracking Id</th>
                                 <th>Delivery Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -105,7 +106,8 @@ const MyParcels = () => {
 
                                         }
                                     </td>
-                                    <td>{'pending'}</td>
+                                    <td>{parcel.trackingId}</td>
+                                    <td>{parcel.deliveryStatus}</td>
                                     <td className='space-x-1.5'>
                                         {/* view */}
                                         <Link to={`/dashboard/parcelsDetails/${parcel._id}`} className='btn btn-square hover:bg-primary'>

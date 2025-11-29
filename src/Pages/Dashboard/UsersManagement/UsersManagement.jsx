@@ -1,17 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import { FaUserMinus, FaUserShield } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 const UsersManagement = () => {
+    // search
+    const [searchText, setSearchText]=useState('');
+
     // axios
     const axiosSecure = useAxiosSecure();
     // data fetch
     const { refetch, data: users = [] } = useQuery({
-        queryKey: ['users'],
+        queryKey: ['users',searchText],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/users`);
+            const res = await axiosSecure.get(`/users?searchText=${searchText}`);
             return res.data;
         }
     })
@@ -88,6 +91,27 @@ const UsersManagement = () => {
         <div className="max-w-6xl mx-auto py-5">
             <div className="bg-white rounded-2xl p-4  ">
                 <h2 className='text-2xl text-secondary font-bold'>Users Management : <span className='text-xl text-black'>{users.length}</span></h2>
+
+                <label className="input my-5">
+                    <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                            strokeWidth="2.5"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input
+                        onChange={(e)=>setSearchText(e.target.value)}
+                        type="search"
+                        className="grow"
+                        placeholder="Search"
+                    />
+                </label>
 
                 <div className="overflow-x-auto">
                     <table className="table">

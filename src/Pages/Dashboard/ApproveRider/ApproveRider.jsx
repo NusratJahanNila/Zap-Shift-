@@ -58,7 +58,8 @@ const ApproveRider = () => {
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Status</th>
+                                <th>Application Status</th>
+                                <th>Work Status</th>
                                 <th>District</th>
                                 <th>Action</th>
                             </tr>
@@ -72,6 +73,7 @@ const ApproveRider = () => {
                                     <td className={`${rider.status==='approved'? 'text-green-600' : rider.status==='pending'? 'text-yellow-600': 'text-red-600'}`}>
                                         {rider.status}
                                     </td>
+                                    <td>{rider.workStatus}</td>
                                     <td>{rider.riderDistrict}</td>
                                     <td className='space-x-1.5'>
                                         <Link to={`/dashboard/rider-details/${rider._id}`} className='btn bg-primary '>
