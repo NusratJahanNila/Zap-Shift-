@@ -57,8 +57,8 @@ const MyParcels = () => {
     }
     // payment
     const handlePayment = async (parcel) => {
-        // backend a jei data gula lagbe
-        const paymentInfo = {
+        //parcelInfo:  backend a jei data gula lagbe
+        const parcelInfo = {
             cost: parcel.cost,
             parcelId: parcel._id,
             senderEmail: parcel.senderEmail,
@@ -66,9 +66,9 @@ const MyParcels = () => {
             trackingId: parcel.trackingId
         }
         // hit backend api
-        const res = await axiosSecure.post('/create-checkout-session', paymentInfo);
+        const res = await axiosSecure.post('/create-checkout-session', parcelInfo);
 
-        console.log(res.data.url);
+        // console.log(res.data.url);
         // go to checkout page
         window.location.assign(res.data.url);
     }
